@@ -7,18 +7,21 @@ import requests
 nltk.download('punkt')
 
 # Replace with your API token
-aai.settings.api_key = f"KEY"
+aai.settings.api_key = f"5c2f0f64b59d4e5fbdd677c9938a8e98"
 lemur_endpoint = "https://api.assemblyai.com/lemur/v3/generate/task"
 headers = {
-    "Authorization": "KEY"
+    "Authorization": "5c2f0f64b59d4e5fbdd677c9938a8e98"
 }
 
 # URL of the file to transcribe
 FILE_URL = "https://github.com/AssemblyAI-Examples/audio-examples/raw/main/20230607_me_canadian_wildfires.mp3"
 
-#we have already transcri bed tis one
-transcript = aai.Transcript.get_by_id("6pwzxs8umc-9ed2-4268-b6b5-34fe059ab2e8")
+# comment these two lines back in if you want to transcribe a new file
+# transcriber = aai.Transcriber()
 # transcript = transcriber.transcribe(FILE_URL)
+
+#we have already transcribed this one - comment out this line if you're transcribing a new file
+transcript = aai.Transcript.get_by_id("6mvfr2epvp-65bc-46dc-8b4e-b87487b5da4b")
 
 paragraphs = []
 for paragraph in transcript.get_paragraphs():
@@ -31,9 +34,9 @@ for sentence in transcript.get_sentences():
 # Load the pre-trained sentence transformer model
 # Note - the first time you do this, it will take some time to download the model
 # We are downloading the model locally
-# Why distilbert-base-nli-stsb-mean-tokens? it's small so it will download and run relatively quickly in memory (though there will be some performance tradeoffs v larger bert model)
+# Why all-MiniLM-L6-v2? it's near the top of the leaderboard for semantic similarity search and is 5x faster than the largest model
 # It's also a good model for semantic similarity because it's been trained on the STSB benchmark dataset
-model = SentenceTransformer('distilbert-base-nli-stsb-mean-tokens')
+model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 
 # Embed each sentence in sentences
 sentence_embeddings = model.encode(sentences)
