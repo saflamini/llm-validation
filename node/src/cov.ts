@@ -7,8 +7,8 @@ const HEADERS: Record<string, string> = {
 };
 const FILE_URL: string = "https://github.com/AssemblyAI-Examples/audio-examples/raw/main/20230607_me_canadian_wildfires.mp3";
 const PLACEHOLDER_URL = "https://api.assemblyai-solutions.com/storage/v1/object/public/sam_training_bucket/hello-48300.mp3"
-const PLACEHOLDER_ID: string = "6mg1zsu0yw-0d73-45a2-a631-acc347ec210b";
-const CANADIAN_WILDFIRES_TRANSCRIPT_ID: string = "6mzwnvtu5k-8724-4bd5-8bd1-62dd2175ed09";
+const PLACEHOLDER_ID: string = "6mg1zsu0yw-0d73-45a2-a631-acc347ec210b"; // REPLACE WITH YOUR OWN PLACEHOLDER ID by transcribing the PLACEHOLDER FILE
+const CANADIAN_WILDFIRES_TRANSCRIPT_ID: string = "6mzwnvtu5k-8724-4bd5-8bd1-62dd2175ed09"; // REPLACE WITH YOUR OWN TRANSCRIPT ID
 
 interface LemurResponse {
     response: string;
