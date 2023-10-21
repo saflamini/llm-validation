@@ -1,6 +1,6 @@
 import fetch from "cross-fetch";
 
-const API_KEY: string = "YOUR_API_KEY";
+const API_KEY: string = "";
 const LEMUR_ENDPOINT: string = "https://api.assemblyai.com/lemur/v3/generate/task";
 const HEADERS: Record<string, string> = {
     "Authorization": API_KEY
@@ -48,7 +48,10 @@ async function main(): Promise<void> {
         'basic', 
         CANADIAN_WILDFIRES_TRANSCRIPT_ID
     );
+
+
     const summarySentences: string[] = splitIntoSentences(lemurSummary.response);
+
 
     console.log("ZERO SHOT SUMMARY");
     console.log(lemurSummary.response);
