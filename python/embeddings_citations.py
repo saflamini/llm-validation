@@ -10,7 +10,7 @@ nltk.download('punkt')
 aai.settings.api_key = f""
 lemur_endpoint = "https://api.assemblyai.com/lemur/v3/generate/task"
 headers = {
-    "Authorization": "5c2f0f64b59d4e5fbdd677c9938a8e98"
+    "Authorization": "KEY"
 }
 
 # URL of the file to transcribe
