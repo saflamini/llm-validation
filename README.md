@@ -33,7 +33,10 @@ NEXT STEPS:
 - Usage of TypeChat from Microsoft for further validation
 - Eval suite to track performance of various methods & models
 
-### Running the project
+### Running the project in node
+
+Cd into the node dir:
+`cd node`
 
 Step 1 - install dependencies:
 `npm install`
