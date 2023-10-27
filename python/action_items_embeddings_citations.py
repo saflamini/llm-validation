@@ -6,12 +6,13 @@ from sklearn.metrics.pairwise import cosine_similarity
 import nltk
 import requests
 nltk.download('punkt')
+import os
 
 # Replace with your API token
-aai.settings.api_key = "KEY"
+aai.settings.api_key = os.environ.get("assemblyai_key")
 lemur_endpoint = "https://api.assemblyai.com/lemur/v3/generate/task"
 headers = {
-    "Authorization": "KEY"
+    "Authorization": os.environ.get("assemblyai_key")
 }
 
 
