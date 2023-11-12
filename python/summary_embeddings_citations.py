@@ -92,7 +92,7 @@ if __name__ == "__main__":
     
     lemur_summary = "Wildfires in Canada are making the air dirty in many places in the US. Smoke from the fires is traveling through the sky and making it hard to breathe in places like New York and Baltimore. The smoke has tiny pieces in it that can get inside your lungs if you breathe them. This can make you sick, especially kids and older adults. The pieces in the smoke are much more than normal and that's why the air is unhealthy. More people could get sick until the weather changes and moves the smoke away. Fires might happen more often in the future because of climate change, so dirty air could affect more places."
     
-    new_summary, filtered_sentences = filter_summary_sentences(lemur_summary, "6mvfr2epvp-65bc-46dc-8b4e-b87487b5da4b", model_name)
+    new_summary, filtered_sentences = filter_summary_sentences(lemur_summary, "6vkxdgap5h-8d7b-4559-a702-16bf4c7c3b44", model_name)
     
     print("***************************")
     print("NEW SUMMARY OUTPUT")

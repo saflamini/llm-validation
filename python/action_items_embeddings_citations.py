@@ -74,7 +74,7 @@ for header, tasks in sections.items():
     formatted_action_items_sections.append(section_text)
 
 #this is the gitlab meeting transcript
-transcript = aai.Transcript.get_by_id("6asupksa3a-72c1-4a8e-a7a7-38802e12cf1c")
+transcript = aai.Transcript.get_by_id("6v4muko96g-2d7a-4bc9-883f-fb33b4691a8e")
 
 paragraphs = []
 for paragraph in transcript.get_paragraphs():

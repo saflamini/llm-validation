@@ -79,7 +79,7 @@ def process_lemur_qa(lemur_qa, sentence_embeddings, paragraph_embeddings, chunk_
             most_similar_granularity = top_k_chunk_similarities[0]
         else:
             transcript_ref = "No reference met the threshold."
-            most_similar_granularity = 0
+            most_similar_granularity = max_margin
         
         grounding_threshold_passed = max_margin > 0
         
@@ -98,7 +98,7 @@ def process_lemur_qa(lemur_qa, sentence_embeddings, paragraph_embeddings, chunk_
 if __name__ == "__main__":
     API_KEY = ""
     FILE_URL = "https://github.com/AssemblyAI-Examples/audio-examples/raw/main/20230607_me_canadian_wildfires.mp3"
-    TRANSCRIPT_ID = "6mvfr2epvp-65bc-46dc-8b4e-b87487b5da4b"
+    TRANSCRIPT_ID = "6vkxdgap5h-8d7b-4559-a702-16bf4c7c3b44"
     MODEL_NAME = "infgrad/stella-base-en-v2"
 
     # headers = initialize_assemblyai(API_KEY, "https://api.assemblyai.com/lemur/v3/generate/task")
