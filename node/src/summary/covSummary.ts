@@ -1,6 +1,8 @@
 import fetch from "cross-fetch";
+import dotenv from "dotenv";
+dotenv.config();
 
-const API_KEY: string = "";
+const API_KEY: string = process.env.assemblyai_api_key || "";
 const LEMUR_ENDPOINT: string = "https://api.assemblyai.com/lemur/v3/generate/task";
 const HEADERS: Record<string, string> = {
     "Authorization": API_KEY

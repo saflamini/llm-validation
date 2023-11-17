@@ -3,12 +3,13 @@ import * as tf from '@tensorflow/tfjs';
 import * as use from '@tensorflow-models/universal-sentence-encoder';
 import { Tensor2D } from '@tensorflow/tfjs';
 import { AssemblyAI } from 'assemblyai';
+import dotenv from "dotenv";
+dotenv.config();
 //using dynamic imports format to make this work w typescript
 import("@xenova/transformers").then((module) => {
    let { pipeline } = module;
-
-//replace with your own API key
-const API_KEY: string = "";
+   
+const API_KEY: string = process.env.assemblyai_api_key || "";
 const AAI_ENDPOINT = "https://api.assemblyai.com/v2/transcript";
 const LEMUR_ENDPOINT: string = "https://api.assemblyai.com/lemur/v3/generate/task";
 const HEADERS: Record<string, string> = {

@@ -7,12 +7,15 @@ import { AssemblyAI } from 'assemblyai';
 import http from 'http';
 import querystring from 'querystring';
 import url from 'url';
+import dotenv from "dotenv";
+dotenv.config();
 //using dynamic imports format to make this work w typescript
 import("@xenova/transformers").then((module) => {
    let { pipeline } = module;
 
 //replace with your own API key
-const API_KEY = "";
+const API_KEY: string = process.env.assemblyai_api_key || "";
+
 // const LEMUR_ENDPOINT = "https://api.assemblyai.com/lemur/v3/generate/task";
 const LEMUR_ENDPOINT = "https://api.staging.assemblyai-labs.com/lemur/v3/generate/" // this is the staging endpoint, using for testing
 const AAI_ENDPOINT = "https://api.assemblyai.com/v2/transcript";
