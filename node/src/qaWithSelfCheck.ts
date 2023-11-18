@@ -2,49 +2,18 @@ import fetch from "cross-fetch";
 import dotenv from "dotenv";
 dotenv.config();
 import { AssemblyAI } from 'assemblyai';
+import { model } from "@tensorflow/tfjs";
 
-//New method for applying an LLM check to a QA response
-//Take QA output
-//Compare to original transcript and ask whether or not it is grounded within the transcript? can you find clear evidence for this answer in the transcript?
-//Generate new response based on findings
+//method for applying an LLM check to a QA response, then dynamically reasking questions that are not sufficiently grounded in the transcript
 
 const API_KEY: string = process.env.assemblyai_api_key || "";
-const LEMUR_ENDPOINT: string = "https://api.assemblyai.com/lemur/v3/generate/task";
-const HEADERS: Record<string, string> = {
-    "Authorization": API_KEY
-};
 
+//the transcript we'll use as an example
 const SAMPLE_TRANSCRIPT_ID = "6nsz0rrkkt-94c9-4bd1-9046-58caa977dadf"
-
-function prepareStringForJson(input) {
-    // First, replace escaped single quotes with a placeholder
-    let result = input.replace(/\\'/g, '__SINGLE_QUOTE__');
-
-    // Then, replace single quotes around keys and values with double quotes
-    result = result.replace(/([{,]\s*)'([^']+)'\s*:/g, '$1"$2":');
-    result = result.replace(/:\s*'([^']+)'/g, ': "$1"');
-
-    // Finally, revert the placeholders back to single quotes
-    result = result.replace(/__SINGLE_QUOTE__/g, "'");
-
-    return result;
-}
-
-
-const originalJSONList = "[{'question': 'What locations in california are the interviewees from?', 'answer': 'The interviewees are from various locations in California including Ventura County, San Diego, Los Angeles, and Sonoma County.'}, {'question': 'What are the main reasons why people are moving to Texas from California?', 'answer': 'The main reasons people are moving from California to Texas are the high cost of living, high housing prices, high taxes, overregulation of businesses, increased crime, homelessness, and liberal politics in California.'}, {'question': 'What demographics are moving out of California in the highest quantities?', 'answer': 'The transcript does not cite specific demographic data, but interviees mentioned that California is becoming less friendly to young families in comparison to older, affluent people.'}, {'question': 'What do the people who moved to Texas think of Texas?', 'answer': 'Most of the people who moved from California to Texas are very happy with their decision. They cite the lower cost of living, bigger and more affordable houses, feeling of safety, and being around more politically like-minded people as the main benefits.'}, {'question': 'Why is California so much more expensive than Texas?', 'answer': 'California is more expensive due to very high housing costs, higher taxes, more regulations that increase business costs, and an overall higher cost of goods and services.'}, {'question': 'How much more expensive is California than the rest of the country?', 'answer': \"California's cost of living is about 15% higher than the overall United States.\"}]"
-
-const jsonQAList = prepareStringForJson(originalJSONList)
-
 
 async function main(): Promise<void> {
 
-    // console.log("ZERO SHOT QA Response");
-    // console.log(` ${jsonQAList.map((qa) => {
-    //     return `${qa.question}: ${qa.answer}`
-    // }).join("\n")}`)
-    // console.log("***********************************************************");
-
-    async function selfCheckLeMURQA(jsonQAList: any, transcriptId: string) {
+    async function selfCheckWithReask(transcriptId: string) {
 
         const client = new AssemblyAI({
             apiKey: API_KEY,
@@ -74,8 +43,7 @@ async function main(): Promise<void> {
         };
 
         const firstShotResponse = await client.lemur.questionAnswer(firstShotRequest)
-        // Parse the JSON string into an array of objects
-        // const qaList = JSON.parse(jsonQAList);
+
         console.log(firstShotResponse)
         let qaList = firstShotResponse.response
     
@@ -92,13 +60,13 @@ async function main(): Promise<void> {
         const lemurRequest = {
             transcript_ids: [transcriptId],
             questions: formattedQuestions,
-            context: "An answer is hallucinated if you cannot find sufficient evidence within the transcript to support it. If there is sufficient evidence, make sure you always put YES, and if there is not sufficient evidence, make sure you always put NO. You should answer NO even if the answer is partially supported by the transcript."
-            // final_model: 'basic'
+            context: "An answer is hallucinated if you cannot find sufficient evidence within the transcript to support it. If there is sufficient evidence, make sure you always put YES, and if there is not sufficient evidence, make sure you always put NO. You should answer NO even if the answer is partially supported by the transcript.",
+            final_model: 'basic'
         };
     
         // Call the LeMUR API
         const response = await client.lemur.questionAnswer(lemurRequest)
-        
+        console.log(firstShotResponse)
         let qaResults = [];
 
         const r = response.response
@@ -108,14 +76,66 @@ async function main(): Promise<void> {
             const qaItem = r[i];
             const groundingThresholdPassed = qaItem.answer === 'YES';
             qaResults.push({
-                qaItem: qaItem.question,
+                quesion: qaItem.question,
                 groundingThresholdPassed: groundingThresholdPassed,
             });
         }
-        return qaResults;
+
+        let reaskQuestions = []
+        let reaskQuestionIds = []
+
+        for (let i = 0; i < qaResults.length; i++) {
+            if (qaResults[i].groundingThresholdPassed === false) {
+                let reaskQuestion = {
+                    question: qaList[i].question,
+                    context: `The previous response you gave to this question is here: ${qaList[i].answer}. Please provide a new response to this question that is fully grounded in the transcript. If you cannot find sufficient evidence, please say so`,
+                    answer_format: 'single sentence'
+                }
+                reaskQuestions.push(reaskQuestion)
+                reaskQuestionIds.push(i)
+            }
+        }
+
+        console.log("QUESTIONS TO REASK")
+        console.log(reaskQuestions)
+        if (reaskQuestions.length === 0) {
+            return r;
+        } else {
+            // Prepare the LeMUR request
+            const lemurSecondShotRequest = {
+                transcript_ids: [transcriptId],
+                questions: reaskQuestions,
+                context: "An answer is hallucinated if you cannot find sufficient evidence within the transcript. You are to make ABSOLUTELY SURE THAT EVERY ANSWER YOU PROVIDE TO THE QUESTIONS ARE GROUNDED IN THE TRANSCRIPT",
+                final_model: 'basic'
+            };
+    
+            // Call the LeMUR API
+            const lemurSecondShotResponse = await client.lemur.questionAnswer(lemurSecondShotRequest)
+
+            let mergedResponses = []
+
+            for (let i = 0; i < qaResults.length; i++) {
+                if (reaskQuestionIds.includes(i)) {
+                    let item = {
+                        question: qaList[i].question,
+                        answer: lemurSecondShotResponse.response[i].answer
+                    }
+                    mergedResponses.push(item)
+                    // mergedResponses.push(lemurSecondShotResponse.response[i])
+                } else {
+                    let existingItem = {
+                        question: qaList[i].question,
+                        answer: qaList[i].answer
+                    }
+                    mergedResponses.push(existingItem)
+                }
+            }
+        
+            return mergedResponses;
+        }
     }
 
-    selfCheckLeMURQA(jsonQAList, SAMPLE_TRANSCRIPT_ID)
+    selfCheckWithReask(SAMPLE_TRANSCRIPT_ID)
     .then(response => console.log(response))
     .catch(error => console.error(error));
 }

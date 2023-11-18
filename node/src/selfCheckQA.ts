@@ -10,11 +10,8 @@ import { json } from "stream/consumers";
 //Generate new response based on findings
 
 const API_KEY: string = process.env.assemblyai_api_key || "";
-const LEMUR_ENDPOINT: string = "https://api.assemblyai.com/lemur/v3/generate/task";
-const HEADERS: Record<string, string> = {
-    "Authorization": API_KEY
-};
 
+// const SAMPLE_TRANSCRIPT_ID = "6nsz18w71v-b84e-4060-a1e3-072cb2ba281f"
 const SAMPLE_TRANSCRIPT_ID = "6nsz0rrkkt-94c9-4bd1-9046-58caa977dadf"
 
 function prepareStringForJson(input) {
@@ -31,8 +28,10 @@ function prepareStringForJson(input) {
     return result;
 }
 
-
-const originalJSONList = "[{'question': 'What locations in california are the interviewees from?', 'answer': 'The interviewees are from various locations in California including Ventura County, San Diego, Los Angeles, and Sonoma County.'}, {'question': 'What are the main reasons why people are moving to Texas from California?', 'answer': 'The main reasons people are moving from California to Texas are the high cost of living, high housing prices, high taxes, overregulation of businesses, increased crime, homelessness, and liberal politics in California.'}, {'question': 'What demographics are moving out of California in the highest quantities?', 'answer': 'The transcript does not cite specific demographic data, but interviees mentioned that California is becoming less friendly to young families in comparison to older, affluent people.'}, {'question': 'What do the people who moved to Texas think of Texas?', 'answer': 'Most of the people who moved from California to Texas are very happy with their decision. They cite the lower cost of living, bigger and more affordable houses, feeling of safety, and being around more politically like-minded people as the main benefits.'}, {'question': 'Why is California so much more expensive than Texas?', 'answer': 'California is more expensive due to very high housing costs, higher taxes, more regulations that increase business costs, and an overall higher cost of goods and services.'}, {'question': 'How much more expensive is California than the rest of the country?', 'answer': \"California's cost of living is about 15% higher than the overall United States.\"}]"
+//sample json output - this is what we'll be using for the self-check
+//this json output has a hallucination - the answer to the first questsion is hallucinated
+const originalJSONList = "[{'question': 'What does Obama think about gun rights in America?', 'answer': 'Obama believes that gun ownership has gone too far in America, and that it needs to be reigned in to a substantial degree. He thinks there should be strict regulations like background checks and lengthy approval processes to help prevent guns from getting into more hands'}, {'question': 'What are the primary concerns of the audience members?', 'answer': 'The audience members are concerned that Obama wants to restrict gun rights and limit access to guns, especially for law-abiding citizens. They believe criminals should be held accountable instead.'}, {'question': 'What is the sentiment of this conversation?', 'answer': 'The sentiment is tense but respectful, with Obama trying to reassure gun owners that he supports the Second Amendment while also arguing for targeted regulations to improve public safety. The audience members are skeptical.'}]"
+//when we run the below function, we should see that the grounding threshold should not be passed for the first example
 
 const jsonQAList = prepareStringForJson(originalJSONList)
 
