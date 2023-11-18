@@ -38,20 +38,46 @@ const jsonQAList = prepareStringForJson(originalJSONList)
 
 async function main(): Promise<void> {
 
-    console.log("ZERO SHOT QA Response");
-    console.log(` ${jsonQAList.map((qa) => {
-        return `${qa.question}: ${qa.answer}`
-    }).join("\n")}`)
-    console.log("***********************************************************");
+    // console.log("ZERO SHOT QA Response");
+    // console.log(` ${jsonQAList.map((qa) => {
+    //     return `${qa.question}: ${qa.answer}`
+    // }).join("\n")}`)
+    // console.log("***********************************************************");
 
     async function selfCheckLeMURQA(jsonQAList: any, transcriptId: string) {
 
         const client = new AssemblyAI({
             apiKey: API_KEY,
-          })
-    
+        })
+
+        const initialQuestions = [
+            {
+                question: `What locations in california are the interviewees from?`,
+                answer_format: 'single sentence'
+            },
+            {
+                question: `What are the main reasons why people are moving to Texas from California?`,
+                answer_format: 'single sentence'
+            },
+            {
+                question: `What demographics are moving out of California in the highest quantities?`,
+                answer_format: 'single sentence'
+            }
+        ]
+
+         // Prepare the LeMUR request
+        const firstShotRequest = {
+            transcript_ids: [transcriptId],
+            questions: initialQuestions,
+            context: "If there is sufficient evidence for an answer to a question, or a question is irrelevant to the transcript, please say so.",
+            // final_model: 'basic'
+        };
+
+        const firstShotResponse = await client.lemur.questionAnswer(firstShotRequest)
         // Parse the JSON string into an array of objects
-        const qaList = JSON.parse(jsonQAList);
+        // const qaList = JSON.parse(jsonQAList);
+        console.log(firstShotResponse)
+        let qaList = firstShotResponse.response
     
         // Format the questions for LeMUR
         const formattedQuestions = qaList.map(qa => {
