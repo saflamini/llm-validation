@@ -2,6 +2,7 @@ import fetch from "cross-fetch";
 import dotenv from "dotenv";
 dotenv.config();
 import { AssemblyAI } from 'assemblyai';
+import { json } from "stream/consumers";
 
 //New method for applying an LLM check to a QA response
 //Take QA output
@@ -35,11 +36,10 @@ const originalJSONList = "[{'question': 'What locations in california are the in
 
 const jsonQAList = prepareStringForJson(originalJSONList)
 
-
 async function main(): Promise<void> {
 
     console.log("ZERO SHOT QA Response");
-    console.log(` ${jsonQAList.map((qa) => {
+    console.log(` ${JSON.parse(jsonQAList).map((qa) => {
         return `${qa.question}: ${qa.answer}`
     }).join("\n")}`)
     console.log("***********************************************************");

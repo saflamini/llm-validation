@@ -122,7 +122,7 @@ export async function selfCheckLeMURQA(jsonQAList: any, transcriptId: string, as
             transcript_ids: [transcriptId],
             questions: formattedQuestions,
             context: "An answer is hallucinated if you cannot find sufficient evidence within the transcript to support it. If there is sufficient evidence, make sure you always put YES, and if there is not sufficient evidence, make sure you always put NO. You should answer NO even if the answer is partially supported by the transcript.",
-            model: 'default'
+            model: 'basic'
         };
 
         // Call the LeMUR API
