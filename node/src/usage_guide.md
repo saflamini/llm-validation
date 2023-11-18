@@ -25,8 +25,11 @@ the method found in selfCheckQA and qaWithSelf check (using an LLM to detect a h
 The areas where the LLM delivered false positives in its check occured when the question required a more 'high level' evaluation of the transcript. Questions such as 'what was the sentiment of this conversation' are flagged as ungrounded because there are no direct citations which are generated in support of such an observation.
 
 
-#### Test results:
+#### Test results when using method in selfCheckQA
 Eval of Hallucination Free Responses: 72%
+
 Eval of Hallucination Responses:
+
 Partial Success Rate (at least one hallucination identified): 64%
+
 Total 100% Successful Tests: 56%
