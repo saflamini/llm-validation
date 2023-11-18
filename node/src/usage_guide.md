@@ -26,7 +26,7 @@ This section is structured as follows:
 #### Findings from testing:
 The method found in `embeddingCitationsQA.ts` is not very effective. There are many false positives and most of the actual hallucinations are either only partially identified or completely missed.
 
-The method found in `selfCheckQA.ts` and `qaWithSelf.ts` check (using an LLM to detect a hallucination within the output) performed much better. There were few false positives, and a > 50% success rate in identifying hallucinations.
+The method found in `selfCheckQA.ts` and `qaWithSelf.ts` check (using an LLM to detect a hallucination within the output) performed much better. There were fewer false positives, and a > 50% success rate in identifying hallucinations.
 
 The areas where the LLM delivered false positives in its check occured when the question required a more 'high level' evaluation of the transcript. Questions such as 'what was the sentiment of this conversation' are flagged as ungrounded because there are no direct citations which are generated in support of such an observation.
 
