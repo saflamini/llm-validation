@@ -32,13 +32,6 @@ The areas where the LLM delivered false positives in its check occured when the 
 
 
 #### Test results when using method in selfCheckQA with LeMUR default as the checker
-Eval of Hallucination Free Responses: 72%
-
-Eval of Hallucination Responses:
-
-Partial Success Rate (at least one hallucination identified): 64%
-
-Total 100% Successful Tests (all hallucinations identified): 56%
 
 <table>
 <tr>
